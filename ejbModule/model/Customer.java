@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
 		@NamedQuery(name = "Customer.findByName", query = "select o from Customer o where o.userName = :username"),
-		@NamedQuery(name = "Customer.find", query = "select o from Customer o where o.userName = :username") })
+		@NamedQuery(name = "Customer.find", query = "select o from Customer o where o.userName = :username")})
 public class Customer implements Serializable {
 
 	
@@ -33,18 +34,21 @@ public class Customer implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private Long id;
+	private int id;
 	private String userName;
 	private String password;
 	private String passwordReset;
 	
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name="customer_id",unique=false)
 	private Set<Account> accounts = new HashSet<Account>();
 	
-	@OneToMany(mappedBy = "customer")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name="customer_id",unique=false)
 	private Set<Orders> orders = new HashSet<Orders>();
 	
-	@OneToMany(mappedBy = "customer")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name="customer_id",unique=false)
 	private Set<Review> reviews = new HashSet<Review>();
 
 	private static final long serialVersionUID = 1L;
@@ -61,13 +65,6 @@ public class Customer implements Serializable {
 		this.userName = userName;
 	}
 
-	public Long getId() {
-		return this.id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getPassword() {
 		return this.password;
@@ -104,8 +101,24 @@ public class Customer implements Serializable {
 	public String toString() {
 		return "Customer [userName=" + userName + ", id=" + id + ", password="
 				+ password + ", passwordReset=" + passwordReset + ", accounts="
-				+ accounts + ", orders=" + orders + ", reviews=" + reviews
+				+ accounts 
 				+ "]";
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public Set<Review> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(Set<Review> reviews) {
+		this.reviews = reviews;
 	}
 
 }

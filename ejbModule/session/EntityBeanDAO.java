@@ -39,6 +39,12 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 		// TODO Auto-generated constructor stub
 	}
 
+	public String update(Object o) {
+		// TODO Auto-generated method stub
+		em.merge(o);
+		return "success";
+	}
+
 	public String createObject(Object o) {
 		// TODO Auto-generated method stub
 		String hashedPass;
@@ -56,7 +62,8 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 		}
 		if (o instanceof Customer) {
 			try {
-				hashedPass = PasswordHash.createHash(((Customer) o).getPassword());
+				hashedPass = PasswordHash.createHash(((Customer) o)
+						.getPassword());
 				((Customer) o).setPassword(hashedPass);
 
 			} catch (NoSuchAlgorithmException e) {
@@ -67,26 +74,36 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Creating Object:" + o.toString() );
+//		if(o instanceof Account){
+//			System.out.println("Creating Object:" + o.toString());
+//			return "success";
+//		}
+		System.out.println("Creating Object:" + o.toString());
 		em.persist(o);
 		return "success";
 	}
 
-	// Account
-	public Account deleteAccount(Account acc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void delete(Object o) {
+		if (o instanceof Account) {
+			em.createNamedQuery("Account.remove").setParameter("id", ((Account) o).getId()).executeUpdate();
+		}
+		if (o instanceof Item) {
+			em.createNamedQuery("Item.remove").setParameter("id", ((Item) o).getId()).executeUpdate();
+		}
+		if (o instanceof Review) {
+			em.createNamedQuery("Review.remove").setParameter("id", ((Review) o).getId()).executeUpdate();
+		}
+		if(o instanceof Orders) {
+			em.createNamedQuery("Orders.remove").setParameter("id", ((Orders) o).getId()).executeUpdate();
+		}
 
-	public Account updateAccount(Account acc) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public Account getAccountById(int id) {
 		// TODO Auto-generated method stub
-		Account acc = em.find(Account.class, id);
-		return acc;
+		List<Account> result = em.createNamedQuery("Account.findById")
+				.setParameter("id", id).getResultList();
+		return result.get(0);
 	}
 
 	public List<Account> getAllAccount() {
@@ -94,6 +111,17 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 				.getResultList();
 		return result;
 
+	}
+
+	public List<Account> getAccountByCus(Customer c) {
+		System.out.println(c.getId());
+		List<Account> result = em.createNamedQuery("Account.getAccountByCus")
+				.setParameter("id", c.getId()).getResultList();
+		// if(!result.isEmpty()){
+
+		return result;
+		// }
+		// return null;
 	}
 
 	// Customer
@@ -111,39 +139,19 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 				return true;
 			}
 		}
-		if(!admin.isEmpty()) {
+		if (!admin.isEmpty()) {
 			correctHash = admin.get(0).getPassword();
 			if (PasswordHash.validatePassword(psw, correctHash)) {
 				return true;
 			}
-		} 
+		}
 		return false;
 
 	}
 
-	public Customer deleteCustomer(Customer cus) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Customer updateCustomer(Customer cus) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// Category
-
-	public Category deleteCategory(Category c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Category updateCategory(Category c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public Category findCateByName(String categoryName2){
-		List<Category> result = em.createNamedQuery("Category.findByName").setParameter("name", categoryName2).getResultList();
+	public Category findCateByName(String categoryName2) {
+		List<Category> result = em.createNamedQuery("Category.findByName")
+				.setParameter("name", categoryName2).getResultList();
 		return result.get(0);
 	}
 
@@ -151,7 +159,8 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 	public Admin adminLogin(String name, String psw)
 			throws NoSuchAlgorithmException, InvalidKeySpecException {
 		String correctHash;
-		List<Admin> Admin = em.createNamedQuery("Admin.findByName").setParameter("name", name).getResultList();
+		List<Admin> Admin = em.createNamedQuery("Admin.findByName")
+				.setParameter("name", name).getResultList();
 		if (!Admin.isEmpty()) {
 			correctHash = Admin.get(0).getPassword();
 			String password = PasswordHash.createHash(psw);
@@ -164,75 +173,69 @@ public class EntityBeanDAO implements Serializable, EntityBeanDAOLocal {
 		}
 	}
 
-	public Admin deleteAdmin(Admin c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Admin updateAdmin(Admin c) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public List<Item> getAllItems() {
 		// TODO Auto-generated method stub
-		List<Item> items = em.createNamedQuery("Item.findAllItems").getResultList();
-		
+		List<Item> items = em.createNamedQuery("Item.findAllItems")
+				.getResultList();
+
 		return items;
 	}
-	public Item deleteItem(Item i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public Item updateItem(Item i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public Item getItemById(int id){
-		List<Item> items = em.createNamedQuery("Item.findById").setParameter("id", id).getResultList();
+	@SuppressWarnings("unchecked")
+	public Item getItemById(int id) {
+		List<Item> items = (List<Item>) em.createNamedQuery("Item.findById")
+				.setParameter("id", id).getResultList();
+		System.out.println(items.toString());
 		return items.get(0);
 	}
-	public List<Category> getAllCategories(){
-		List<Category> c = em.createNamedQuery("Category.findAll").getResultList();
+
+	public List<Category> getAllCategories() {
+		List<Category> c = em.createNamedQuery("Category.findAll")
+				.getResultList();
 		return c;
 	}
-	public ItemSelect deleteItemSelect(ItemSelect i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public ItemSelect updateItemSelect(ItemSelect i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Orders deleteOrder(Orders o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Orders updateOrder(Orders o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Review deleteReview(Review o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Review updateReview(Review o) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public List<Review> getAllReviews(){
+	public List<Review> getAllReviews() {
 		List<Review> r = em.createNamedQuery("Review.findAll").getResultList();
 		return r;
-		
+
 	}
 
-	
+	public List<Review> getReviewByItem(int id) {
+		List<Review> r = em.createNamedQuery("Review.findByItem").setParameter("id", id)
+				.getResultList();
+			return r;
+	}
+
+	public Customer findCustomerByName(String name) {
+		List<Customer> customers = em.createNamedQuery("Customer.findByName")
+				.setParameter("username", name).getResultList();
+		return customers.get(0);
+
+	}
+
+	public List<Item> findItemByManu(String content) {
+		List<Item> items = em.createNamedQuery("Item.findByManufacturer")
+				.setParameter("manufacturer", content).getResultList();
+		if (!items.isEmpty())
+			return items;
+		return null;
+	}
+
+	public List<Item> findItemByCategory(String content) {
+		List<Item> items = em.createNamedQuery("Item.findByCategory")
+				.setParameter("category", content).getResultList();
+		if (!items.isEmpty())
+			return items;
+		return null;
+	}
+
+	public List<Item> findItemByTitle(String content) {
+		List<Item> items = em.createNamedQuery("Item.findByTitle")
+				.setParameter("title", content).getResultList();
+		if (!items.isEmpty())
+			return items;
+		return null;
+	}
 
 }

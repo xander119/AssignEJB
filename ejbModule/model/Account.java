@@ -18,23 +18,29 @@ import model.Customer;
 @XmlRootElement
 @NamedQueries({		
 	@NamedQuery(name = "Account.getAll", query = "select o from Account o "),
-	//@NamedQuery(name = "Book.findAll", query = "select o from Book o")
+	@NamedQuery(name = "Account.getAccountByCus", query = "select o from Account o where o.customer.id = :id"),
+	@NamedQuery(name = "Account.findById", query = "select o from Account o where o.id = :id"),
+	@NamedQuery(name = "Account.remove", query = "delete from Account o where o.id = :id")
+
 })
+//.id,o.address,o.paymentMethod,o.balance
 public class Account implements Serializable {
 
 	   
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private long id;
+	private int id;
 	private String address;
 	private String paymentMethod;
-	private Double balance;
+	private double balance;
 	@ManyToOne
 	private Customer customer;
-	@OneToMany(mappedBy="account")
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="account_id")
 	private Set<Orders> orders = new HashSet<Orders>();
-	@OneToMany(mappedBy="customer")
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name="account_id")
 	private Set<Review> reviews = new HashSet<Review>();
 	
 	private static final long serialVersionUID = 1L;
@@ -42,13 +48,7 @@ public class Account implements Serializable {
 	public Account() {
 		super();
 	}   
-	public long getId() {
-		return this.id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}   
+	 
 	public String getAddress() {
 		return this.address;
 	}
@@ -76,10 +76,10 @@ public class Account implements Serializable {
 	public void setPaymentMethod(String paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
-	public Double getBalance() {
+	public double getBalance() {
 		return balance;
 	}
-	public void setBalance(Double balance) {
+	public void setBalance(double balance) {
 		this.balance = balance;
 	}
 	public Set<Review> getReviews() {
@@ -92,8 +92,15 @@ public class Account implements Serializable {
 	public String toString() {
 		return "Account [id=" + id + ", address=" + address
 				+ ", paymentMethod=" + paymentMethod + ", balance=" + balance
-				+ ", customer=" + customer + ", orders=" + orders
-				+ ", reviews=" + reviews + "]";
+				+ ", customer=" + customer + "]";
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
    
 }

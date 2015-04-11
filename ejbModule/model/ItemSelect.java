@@ -18,7 +18,7 @@ public class ItemSelect implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private long id;
+	private int id;
 	private int quantity;
 	private double totalPrice;
 	@ManyToOne
@@ -30,13 +30,23 @@ public class ItemSelect implements Serializable {
 	public ItemSelect() {
 		super();
 	}   
-	public long getId() {
-		return this.id;
+	
+	public int getId() {
+		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
-	}   
+	}
+
+	public Orders getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Orders orders) {
+		this.orders = orders;
+	}
+
 	public int getQuantity() {
 		return this.quantity;
 	}

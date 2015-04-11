@@ -15,8 +15,9 @@ import model.Customer;
 @Entity
 
 @NamedQueries({
-	@NamedQuery(name = "Review.findAll", query = "select o from Review o ")
-//	@NamedQuery(name = "Item.findById", query = "select o.image,o.manufacturer,o.price,o.stockQuantity,o.title from Item o where o.id=:id")
+	@NamedQuery(name = "Review.findAll", query = "select o from Review o "),
+	@NamedQuery(name = "Review.findByItem", query = "select o from Review o where o.item.id = :id"),
+	@NamedQuery(name = "Review.remove", query = "delete from Review o where o.id = :id")
 
 })
 public class Review implements Serializable {
@@ -25,25 +26,30 @@ public class Review implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private long id;
+	private int id;
 	private String content;
 	@ManyToOne
 	private Account account;
 	@ManyToOne
 	private Customer customer;
+	@ManyToOne
+	private Item item;
 	private int rate;
+	
 	private static final long serialVersionUID = 1L;
 
 	public Review() {
 		super();
 	}   
-	public long getId() {
-		return this.id;
+	
+	public int getId() {
+		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
-	}   
+	}
+
 	public String getContent() {
 		return this.content;
 	}
@@ -71,6 +77,14 @@ public class Review implements Serializable {
 
 	public void setRate(int rate) {
 		this.rate = rate;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
    
 }

@@ -29,24 +29,29 @@ public class Category implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private long id;
+	private int id;
 	private String categoryName;
 
-	@OneToMany(mappedBy = "category",fetch=FetchType.EAGER)
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinColumn(name="catagory_id")
 	private Set<Item> items = new HashSet<Item>();
+	
 	private static final long serialVersionUID = 1L;
 
 	public Category() {
 		super();
 	}
 
-	public long getId() {
-		return this.id;
+
+	public int getId() {
+		return id;
 	}
 
-	public void setId(long id) {
+
+	public void setId(int id) {
 		this.id = id;
 	}
+
 
 	public String getCategoryName() {
 		return this.categoryName;

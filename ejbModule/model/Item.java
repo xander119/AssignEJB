@@ -2,6 +2,8 @@ package model;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -15,7 +17,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
 		@NamedQuery(name = "Item.findAllItems", query = "select o from Item o "),
-		@NamedQuery(name = "Item.findById", query = "select o.image,o.manufacturer,o.price,o.stockQuantity,o.title from Item o where o.id=:id")
+		@NamedQuery(name = "Item.findById", query = "select o from Item o where o.id= :id"),
+		@NamedQuery(name = "Item.findByManufacturer", query = "select o from Item o where o.manufacturer like :manufacturer"),
+		@NamedQuery(name = "Item.findByCategory", query = "select o from Item o where o.category.categoryName like :category"),
+		@NamedQuery(name = "Item.findByTitle", query = "select o from Item o where o.title like :title"),
+		@NamedQuery(name = "Item.remove", query = "delete from Item o where o.id = :id")
+
+
 
 })
 public class Item implements Serializable {
@@ -28,7 +36,7 @@ public class Item implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private Long id;
+	private int id;
 
 	@Column
 	private String title;
@@ -45,39 +53,33 @@ public class Item implements Serializable {
 	private String manufacturer;
 	@Column
 	private int stockQuantity;
+	
+	@OneToMany
+	@JoinColumn(name="item_id")
+	private Set<ItemSelect> itemSelects = new HashSet<ItemSelect>();
+	@OneToMany
+	@JoinColumn(name="item_id")
+	private Set<Review> reviews = new HashSet<Review>();
+	
 
-	public Long getId() {
-		return this.id;
+	public Set<Review> getReviews() {
+		return reviews;
 	}
 
-	public void setId(final Long id) {
+	public void setReviews(Set<Review> reviews) {
+		this.reviews = reviews;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof Item)) {
-			return false;
-		}
-		Item other = (Item) obj;
-		if (id != null) {
-			if (!id.equals(other.id)) {
-				return false;
-			}
-		}
-		return true;
-	}
+	
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
 
 	public String getTitle() {
 		return title;
@@ -125,6 +127,14 @@ public class Item implements Serializable {
 
 	public void setStockQuantity(int stockQuantity) {
 		this.stockQuantity = stockQuantity;
+	}
+
+	public Set<ItemSelect> getItemSelects() {
+		return itemSelects;
+	}
+
+	public void setItemSelects(Set<ItemSelect> itemSelects) {
+		this.itemSelects = itemSelects;
 	}
 
 	@Override

@@ -21,45 +21,37 @@ import model.Review;
 public interface EntityBeanDAOLocal {
 	public String createObject(Object o);
 	public boolean login(String name, String password) throws NoSuchAlgorithmException, InvalidKeySpecException;
-
+	public String update(Object o);
+	public void delete(Object o);
 	//account methods
-	public Account deleteAccount (Account acc);
-	public Account updateAccount (Account acc);
 	public Account getAccountById(int id);
 	public List<Account> getAllAccount();
 
 	//customer methods
-	public Customer deleteCustomer (Customer cus);
-	public Customer updateCustomer (Customer cus);
 	//Category methods
-	public Category deleteCategory (Category c);
-	public Category updateCategory (Category c);
 	public Category findCateByName(String categoryName2);
 
 	//Admin methods
-	public Admin deleteAdmin (Admin c);
-	public Admin updateAdmin (Admin c);
 	
 	//Item methods
 	public List<Item> getAllItems();
-	public Item deleteItem (Item i);
-	public Item updateItem (Item i);
 	public Item getItemById(int id);
 	public List<Category> getAllCategories();
+	public List<Item> findItemByManu(String content);
+	public List<Item> findItemByTitle(String content);
+	public List<Item> findItemByCategory(String content);
 
 	
 	//ItemSelect methods
-	public ItemSelect deleteItemSelect (ItemSelect i);
-	public ItemSelect updateItemSelect (ItemSelect i);
 	
 	//Order methods
-	public Orders deleteOrder (Orders o);
-	public Orders updateOrder (Orders o);
 	
 	//Review methods
-	public Review deleteReview (Review o);
-	public Review updateReview (Review o);
 	public List<Review> getAllReviews();
+	public Customer findCustomerByName(String name);
+	public List<Account> getAccountByCus(Customer c);
+	public List<Review> getReviewByItem(int id);
+	
 	
 	
 	

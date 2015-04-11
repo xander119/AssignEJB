@@ -16,12 +16,18 @@ import model.Item;
  *
  */
 @Entity
+@NamedQueries({
+	@NamedQuery(name = "Orders.findAll", query = "select o from Orders o "),
+//	@NamedQuery(name = "Orders.findByItem", query = "select o from Review o where o.item.id = :id")
+	@NamedQuery(name = "Orders.remove", query = "delete from Orders o where o.id = :id")
+
+})
 public class Orders implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", updatable = false, nullable = false)
-	private long id;
+	private int id;
 	private double totalPrice;
 	private String orderDate;
 	@ManyToOne
@@ -29,7 +35,8 @@ public class Orders implements Serializable {
 	@ManyToOne
 	private Customer customer;
 	
-	@OneToMany(mappedBy = "orders")
+	@OneToMany
+	@JoinColumn(name="orders_id")
 	private Set<ItemSelect> itemsSelect = new HashSet<ItemSelect>();
 
 	
@@ -39,13 +46,16 @@ public class Orders implements Serializable {
 		super();
 	}
 
-	public long getId() {
-		return this.id;
+
+	public int getId() {
+		return id;
 	}
 
-	public void setId(long id) {
+
+	public void setId(int id) {
 		this.id = id;
 	}
+
 
 	public Account getAccount() {
 		return this.account;
